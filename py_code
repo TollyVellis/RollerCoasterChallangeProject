@@ -1,0 +1,127 @@
+import codecademylib3
+import pandas as pd
+from  matplotlib import pyplot as plt
+
+# 1 
+# Import necessary libraries
+
+woody = pd.read_csv('Golden_Ticket_Award_Winners_Wood.csv')
+steely = pd.read_csv('Golden_Ticket_Award_Winners_Steel.csv')
+
+# print(woody.tail(5), steely.tail(5))
+
+
+# 2
+# Simple line graph
+def rank_over_time(rollercoaster, df):
+  framey = df[df.Name == rollercoaster]
+  neo_framey = framey.groupby('Year of Rank').Rank.min().reset_index()
+  ax = plt.subplot()
+  plt.plot(neo_framey['Year of Rank'], neo_framey['Rank'])
+  plt.title(f'Ranking over time for {rollercoaster}')
+  plt.xlabel('Year')
+  plt.ylabel('Rank')
+  ax.invert_yaxis()
+  ax.set_yticks([1,2,3])
+  plt.show()
+
+# 3
+# Create a plot of El Toro and Boulder dash hurricanes
+
+def two_rank_over_time(rollercoaster1, rollercoaster2, df):
+  framey1 = df[df.Name == rollercoaster1]
+  framey2 = df[df.Name == rollercoaster2]
+
+  neo_framey1 = framey1.groupby('Year of Rank').Rank.min().reset_index()
+  neo_framey2 = framey2.groupby('Year of Rank').Rank.min().reset_index()
+
+  ax = plt.subplot()
+
+  plt.plot(neo_framey1['Year of Rank'], neo_framey1['Rank'], neo_framey2['Year of Rank'], neo_framey2['Rank'])
+  plt.title(f'Ranking over time for {rollercoaster1} and {rollercoaster2}')
+  plt.xlabel('Year')
+  plt.ylabel('Rank')
+  ax.invert_yaxis()
+  plt.legend([f'{rollercoaster1}', f'{rollercoaster2}'])
+  # ax.set_yticks([1,2,3])
+  plt.show()
+
+two_rank_over_time("El Toro", "Boulder Dash", woody)
+
+# 5
+#Rank all rollercoasters that achieved a certain rank
+def all_rank_over_time(n, df):
+
+  framey = df[df.Rank <= n]
+  neo_framey = framey.groupby(['Name','Year of Rank']).Rank.min().reset_index()
+
+  all_dires = neo_framey['Name'].unique()
+
+  ax = plt.subplot()
+
+  for i in all_dires:
+    fin_plot = neo_framey[neo_framey.Name == i]
+    plt.plot(fin_plot['Year of Rank'], fin_plot['Rank'], label = f'{i}')
+
+  plt.title(f'Rankings for all rollercoasters that broke top {n}')
+  plt.xlabel('Year')
+  plt.ylabel('Ranking')
+  plt.legend()
+  ax.invert_yaxis()
+  ax.set_yticks(range(1,n+1))
+  plt.show()
+
+all_rank_over_time(3, steely)
+
+#6
+
+rc_df = pd.read_csv('roller_coasters.csv')
+print(rc_df.head(5))
+
+# 7
+# Create a simple histogram
+
+def histy(df, name):
+  plt.hist(df[name].dropna())
+  plt.show()
+
+# 8
+#Bar graph
+def barry(df, parky):
+  framey = df[df.park == parky]
+  plt.bar(range(len(framey['name'])),framey['num_inversions'])
+  plt.title(f'Number of inversions for all rollercoasters at {parky}')
+  plt.xlabel('Inversion #')
+  plt.ylabel('Rollercoaster #')
+  plt.show()
+
+barry(rc_df, 'Parc Asterix')
+
+# 9
+#Pie graph
+def piey(df):
+  all_dires = df['status'].unique()
+  # print(all_dires)
+  slicey = []
+
+  for i in all_dires:
+    slicey.append(len(df[df['status'] == i]))
+
+  plt.pie(slicey)
+  plt.axis('equal')
+  plt.title('Status for rollercoaster rides')
+  plt.legend(all_dires)
+  plt.show()
+
+piey(rc_df)
+
+#10 
+#scatter plot
+def scatty(df, val1, val2):
+  plt.scatter(df[val1], df[val2])
+  plt.title(f'Comparing {val1} to {val2} over time')
+  plt.xlabel(val1)
+  plt.ylabel(val2)
+  plt.show()
+
+scatty(rc_df,'speed', 'length')
